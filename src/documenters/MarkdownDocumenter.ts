@@ -757,12 +757,12 @@ export class MarkdownDocumenter {
         if (methodsTable.rows.length > 0) {
             output.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Methods' }));
             output.appendNode(methodsTable);
-        }    
+        }
 
         if (constructorsTable.rows.length > 0) {
             output.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Constructors' }));
             output.appendNode(constructorsTable);
-        }    
+        }
 
         const details: DocSection = new DocSection({ configuration: this._tsdocConfiguration }, [
             new DocHtmlStartTag({ configuration: this._tsdocConfiguration, name: "hr" }),
@@ -781,17 +781,17 @@ export class MarkdownDocumenter {
         if (propertiesParagraph.nodes.length > 0) {
             details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Property details' }));
             details.appendNode(propertiesParagraph);
-        }    
+        }
 
         if (methodsParagraph.nodes.length > 0) {
             details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Method details' }));
             details.appendNode(methodsParagraph);
-        }    
+        }
 
         if (constructorsParagraph.nodes.length > 0) {
             details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Constructor details' }));
             details.appendNode(constructorsParagraph);
-        }    
+        }
 
         details.appendNode(new DocHtmlEndTag({
             configuration: this._tsdocConfiguration, name: "div"
@@ -999,8 +999,15 @@ export class MarkdownDocumenter {
             output.appendNode(parametersTable);
         }
 
+        output.appendNode(new DocHtmlStartTag({
+            configuration,
+            name: 'div',
+            htmlAttributes: [
+                new DocHtmlAttribute({ configuration, name: 'class', value: 'return-section' })
+            ]
+        }));
+
         if (ApiReturnTypeMixin.isBaseClassOf(apiParameterListMixin)) {
-            const returnTypeExcerpt: Excerpt = apiParameterListMixin.returnTypeExcerpt;
             output.appendNode(
                 new DocParagraph({ configuration }, [
                     new DocEmphasisSpan({ configuration, bold: true }, [
@@ -1009,31 +1016,38 @@ export class MarkdownDocumenter {
                 ])
             );
 
-            output.appendNode(this._createParagraphForTypeExcerpt(returnTypeExcerpt));
+            // const returnTypeExcerpt: Excerpt = apiParameterListMixin.returnTypeExcerpt;
+            // output.appendNode(this._createParagraphForTypeExcerpt(returnTypeExcerpt));
 
             if (apiParameterListMixin instanceof ApiDocumentedItem) {
                 if (apiParameterListMixin.tsdocComment && apiParameterListMixin.tsdocComment.returnsBlock) {
                     this._appendSection(output, apiParameterListMixin.tsdocComment.returnsBlock.content);
                 }
             }
+
+            output.appendNode(new DocHtmlEndTag({ configuration, name: 'div' }));
         }
     }
 
     private _createParagraphForTypeExcerpt(excerpt: Excerpt): DocParagraph {
         const configuration: TSDocConfiguration = this._tsdocConfiguration;
 
-        const paragraph: DocParagraph = new DocParagraph({ configuration });
+        const paragraph: DocParagraph = new DocParagraph({ configuration }, [
+            new DocHtmlStartTag({ configuration: this._tsdocConfiguration, name: "code" })
+        ]);
+        
 
         if (!excerpt.text.trim()) {
             paragraph.appendNode(new DocPlainText({ configuration, text: '(not declared)' }));
         } else {
-            this._appendExcerptWithHyperlinks(paragraph, excerpt);
+            this._appendExcerptWithHyperlinks(paragraph, excerpt, false);
         }
 
+        paragraph.appendNode(new DocHtmlEndTag({ configuration: this._tsdocConfiguration, name: "code" }));
         return paragraph;
     }
 
-    private _appendExcerptWithHyperlinks(docNodeContainer: DocNodeContainer, excerpt: Excerpt): void {
+    private _appendExcerptWithHyperlinks(docNodeContainer: DocNodeContainer, excerpt: Excerpt, wrapInCode?: boolean): void {
         const configuration: TSDocConfiguration = this._tsdocConfiguration;
 
         for (const token of excerpt.spannedTokens) {
@@ -1063,7 +1077,11 @@ export class MarkdownDocumenter {
             }
 
             // Otherwise append non-hyperlinked text
-            docNodeContainer.appendNode(new DocPlainText({ configuration, text: unwrappedTokenText }));
+            if (wrapInCode) {
+                docNodeContainer.appendNode(new DocCodeSpan({ configuration, code: unwrappedTokenText }));
+            } else {
+                docNodeContainer.appendNode(new DocPlainText({ configuration, text: unwrappedTokenText }));
+            }
         }
     }
 
@@ -1186,6 +1204,7 @@ export class MarkdownDocumenter {
                 }
                 break
             default:
+                console.log(`UNHANDLED ITEMKIND: ${item.kind}`);
                 break;
         }
 
