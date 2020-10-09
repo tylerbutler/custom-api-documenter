@@ -613,6 +613,7 @@ export class MarkdownDocumenter {
 
         const details: DocSection = new DocSection({ configuration }, [
             new DocHtmlStartTag({ configuration: this._tsdocConfiguration, name: "hr" }),
+            new DocHtmlEndTag({ configuration: this._tsdocConfiguration, name: "hr" }),
             new DocHtmlStartTag({
                 configuration: this._tsdocConfiguration, name: "div", htmlAttributes: [
                     new DocHtmlAttribute({ configuration: this._tsdocConfiguration, name: "id", value: "package-details" })]
@@ -765,6 +766,7 @@ export class MarkdownDocumenter {
 
         const details: DocSection = new DocSection({ configuration: this._tsdocConfiguration }, [
             new DocHtmlStartTag({ configuration: this._tsdocConfiguration, name: "hr" }),
+            new DocHtmlEndTag({ configuration: this._tsdocConfiguration, name: "hr" }),
             new DocHtmlStartTag({
                 configuration: this._tsdocConfiguration, name: "div", htmlAttributes: [
                     new DocHtmlAttribute({ configuration: this._tsdocConfiguration, name: "id", value: "class-details" })]
@@ -929,6 +931,7 @@ export class MarkdownDocumenter {
 
         const details: DocSection = new DocSection({ configuration: this._tsdocConfiguration }, [
             new DocHtmlStartTag({ configuration: this._tsdocConfiguration, name: "hr" }),
+            new DocHtmlEndTag({ configuration: this._tsdocConfiguration, name: "hr" }),
             new DocHtmlStartTag({
                 configuration: this._tsdocConfiguration, name: "div", htmlAttributes: [
                     new DocHtmlAttribute({ configuration: this._tsdocConfiguration, name: "id", value: "interface-details" })]
