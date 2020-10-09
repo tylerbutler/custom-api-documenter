@@ -622,22 +622,22 @@ export class MarkdownDocumenter {
 
 
         if (enumsParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration, title: 'Enumerations' }));
+            details.appendNode(new DocHeading({ configuration, title: 'Enumeration details' }));
             details.appendNode(enumsParagraph);
         }
 
         if (functionsParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration, title: 'Functions' }));
+            details.appendNode(new DocHeading({ configuration, title: 'Function details' }));
             details.appendNode(functionsParagraph);
         }
 
         if (varsParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration, title: 'Variables' }));
+            details.appendNode(new DocHeading({ configuration, title: 'Variable details' }));
             details.appendNode(varsParagraph);
         }
 
         if (aliasesParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration, title: 'Type Aliases' }));
+            details.appendNode(new DocHeading({ configuration, title: 'Type Alias details' }));
             details.appendNode(aliasesParagraph);
         }
 
@@ -749,11 +749,6 @@ export class MarkdownDocumenter {
             output.appendNode(eventsTable);
         }
 
-        if (constructorsTable.rows.length > 0) {
-            output.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Constructors' }));
-            output.appendNode(constructorsTable);
-        }
-
         if (propertiesTable.rows.length > 0) {
             output.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Properties' }));
             output.appendNode(propertiesTable);
@@ -762,7 +757,12 @@ export class MarkdownDocumenter {
         if (methodsTable.rows.length > 0) {
             output.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Methods' }));
             output.appendNode(methodsTable);
-        }
+        }    
+
+        if (constructorsTable.rows.length > 0) {
+            output.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Constructors' }));
+            output.appendNode(constructorsTable);
+        }    
 
         const details: DocSection = new DocSection({ configuration: this._tsdocConfiguration }, [
             new DocHtmlStartTag({ configuration: this._tsdocConfiguration, name: "hr" }),
@@ -774,24 +774,24 @@ export class MarkdownDocumenter {
         ]);
 
         if (eventsParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Events' }));
+            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Event details' }));
             details.appendNode(eventsParagraph);
         }
 
-        if (constructorsParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Constructors' }));
-            details.appendNode(constructorsParagraph);
-        }
-
         if (propertiesParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Properties' }));
+            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Property details' }));
             details.appendNode(propertiesParagraph);
-        }
+        }    
 
         if (methodsParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Methods' }));
+            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Method details' }));
             details.appendNode(methodsParagraph);
-        }
+        }    
+
+        if (constructorsParagraph.nodes.length > 0) {
+            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Constructor details' }));
+            details.appendNode(constructorsParagraph);
+        }    
 
         details.appendNode(new DocHtmlEndTag({
             configuration: this._tsdocConfiguration, name: "div"
@@ -939,17 +939,17 @@ export class MarkdownDocumenter {
         ]);
 
         if (eventsParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Events' }));
+            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Event details' }));
             details.appendNode(eventsParagraph);
         }
 
         if (propertiesParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Properties' }));
+            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Property details' }));
             details.appendNode(propertiesParagraph);
         }
 
         if (methodsParagraph.nodes.length > 0) {
-            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Methods' }));
+            details.appendNode(new DocHeading({ configuration: this._tsdocConfiguration, title: 'Method details' }));
             details.appendNode(methodsParagraph);
         }
 
