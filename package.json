@@ -17,8 +17,8 @@
   "main": "lib/index.js",
   "typings": "dist/rollup.d.ts",
   "dependencies": {
-    "@microsoft/api-extractor-model": "~7.13.3",
-    "@microsoft/tsdoc": "0.13.2",
+    "@microsoft/api-extractor-model": "~7.8.13",
+    "@microsoft/tsdoc": "0.12.19",
     "@rushstack/node-core-library": "~3.26.1",
     "@rushstack/ts-command-line": "^4.5.0",
     "colors": "~1.2.1",
