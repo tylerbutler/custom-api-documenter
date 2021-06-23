@@ -3,3 +3,4 @@ temp
 dist/tsdoc-metadata.json
 /lib
 /dist
+.heft/
