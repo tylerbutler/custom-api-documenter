@@ -40,7 +40,8 @@ import {
     ApiDeclaredItem,
     ApiNamespace,
     ExcerptTokenKind,
-    IResolveDeclarationReferenceResult
+    IResolveDeclarationReferenceResult,
+    TypeParameter
 } from '@microsoft/api-extractor-model';
 
 import { CustomDocNodes } from '../nodes/CustomDocNodeKind';
@@ -138,28 +139,40 @@ export class MarkdownDocumenter {
         switch (apiItem.kind) {
             case ApiItemKind.Class:
                 //output.appendNode(new DocHeading({ configuration, title: `${scopedName} class` }));
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
+                // const generics = (apiItem as ApiTypeParameterListMixin)?.typeParameters;
+                // if (generics) {
+                //     console.log(`Generics: ${JSON.stringify(generics.map(v => v.name))}`);
+                // }
                 break;
             case ApiItemKind.Enum:
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 output.appendNode(new DocHeading({ configuration, title: `${scopedName} enum`, id: this._htmlIDForItem(apiItem) }));
                 break;
             case ApiItemKind.Interface:
                 //output.appendNode(new DocHeading({ configuration, title: `${scopedName} interface` }));
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 break;
-            case ApiItemKind.Constructor:
             case ApiItemKind.ConstructSignature:
+            case ApiItemKind.Constructor:
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 output.appendNode(new DocHeading({ configuration, title: scopedName, level: 2, id: this._htmlIDForItem(apiItem) }));
                 break;
             case ApiItemKind.Method:
             case ApiItemKind.MethodSignature:
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 output.appendNode(new DocHeading({ configuration, title: apiItem.displayName, level: 2, id: this._htmlIDForItem(apiItem) }));
                 break;
             case ApiItemKind.Function:
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 output.appendNode(new DocHeading({ configuration, title: apiItem.displayName, level: 2, id: this._htmlIDForItem(apiItem) }));
                 break;
             case ApiItemKind.Model:
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 output.appendNode(new DocHeading({ configuration, title: `API Reference` }));
                 break;
             case ApiItemKind.Namespace:
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 output.appendNode(new DocHeading({ configuration, title: `${scopedName} namespace` }));
                 break;
             case ApiItemKind.Package:
@@ -169,12 +182,15 @@ export class MarkdownDocumenter {
                 break;
             case ApiItemKind.Property:
             case ApiItemKind.PropertySignature:
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 output.appendNode(new DocHeading({ configuration, title: apiItem.displayName, level: 2, id: this._htmlIDForItem(apiItem) }));
                 break;
             case ApiItemKind.TypeAlias:
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 output.appendNode(new DocHeading({ configuration, title: apiItem.displayName, level: 2, id: this._htmlIDForItem(apiItem) }));
                 break;
             case ApiItemKind.Variable:
+                console.log(`${apiItem.kind}: ${apiItem.displayName}`);
                 output.appendNode(new DocHeading({ configuration, title: apiItem.displayName, level: 2, id: this._htmlIDForItem(apiItem) }));
                 break;
             default:
@@ -327,7 +343,7 @@ export class MarkdownDocumenter {
             convertLineEndings: this._documenterConfig ? this._documenterConfig.newlineKind : NewlineKind.CrLf,
             ensureFolderExists: true
         });
-        console.log(filename, "saved to disk")
+        // console.log(filename, "saved to disk")
     }
 
     private _writeHeritageTypes(output: DocSection | DocParagraph, apiItem: ApiDeclaredItem): void {
@@ -356,8 +372,18 @@ export class MarkdownDocumenter {
                     }
                     this._appendExcerptWithHyperlinks(extendsParagraph, implementsType.excerpt);
                     needsComma = true;
+                    output.appendNode(extendsParagraph);
                 }
-                output.appendNode(extendsParagraph);
+            }
+            if (apiItem.typeParameters.length > 0) {
+                console.log(`HERITAGE GENERIC: ${JSON.stringify(apiItem.typeParameters.map(v => v.name))}`);
+                const typeParamParagraph: DocParagraph = new DocParagraph({ configuration }, [
+                    new DocEmphasisSpan({ configuration, bold: true }, [
+                        new DocPlainText({ configuration, text: 'Type parameters: ' })
+                    ])
+                ]);
+                output.appendNode(typeParamParagraph);
+                this._appendTypeParams(output, apiItem.typeParameters);
             }
         }
 
@@ -369,6 +395,7 @@ export class MarkdownDocumenter {
                     ])
                 ]);
                 let needsComma: boolean = false;
+                console.log(`${apiItem.name}: ${apiItem.typeParameters}`);
                 for (const extendsType of apiItem.extendsTypes) {
                     if (needsComma) {
                         extendsParagraph.appendNode(new DocPlainText({ configuration, text: ', ' }));
@@ -380,6 +407,11 @@ export class MarkdownDocumenter {
             }
         }
     }
+
+    // const typeParameters: IYamlParameter[] = this._populateYamlTypeParameters(uid, apiItem);
+    // if(typeParameters.length) {
+    //     yamlItem.syntax = { typeParameters };
+    // }
 
     private _writeRemarksSection(output: DocSection | DocParagraph, apiItem: ApiItem): void {
         if (apiItem instanceof ApiDocumentedItem) {
@@ -1058,9 +1090,36 @@ export class MarkdownDocumenter {
                     continue;
                 }
             }
+        }
+    }
 
-            // Otherwise append non-hyperlinked text
-            docNodeContainer.appendNode(new DocPlainText({ configuration, text: unwrappedTokenText }));
+    private _appendTypeParams(docNodeContainer: DocNodeContainer, params: readonly TypeParameter[], excerpt?: Excerpt): void {
+        const configuration: TSDocConfiguration = this._tsdocConfiguration;
+
+        for (const typeParam of params) {
+            // console.log(`${t.name}: "${t.constraintExcerpt}"  "${t.defaultTypeExcerpt}"`);
+            // const b = typeParam.tsdocTypeParamBlock;
+            // console.log(`${b?.parameterName}: ${b?.kind} (${b?.content})`);
+            // docNodeContainer.appendNode(new DocPlainText())
+            // this._appendExcerptWithHyperlinks(docNodeContainer, t.constraintExcerpt);
+
+            // console.log(`tp: ${JSON.stringify(b)}`);
+            // docNodeContainer.appendNode(
+            //     new DocPlainText({ configuration, text: `${b?.parameterName} = ${b?.content}` })
+            // );
+
+            const typeParamParagraph: DocParagraph = new DocParagraph({ configuration }, [
+                new DocEmphasisSpan({ configuration, bold: true }, [
+                    new DocPlainText({ configuration, text: typeParam.name }),
+                ]),
+                new DocPlainText({ configuration, text: ` -- ` })
+            ]);
+            if (typeParam.tsdocTypeParamBlock) {
+                console.log(`Appending section for ${typeParam.name}`);
+                this._appendSection(typeParamParagraph, typeParam.tsdocTypeParamBlock.content);
+            }
+
+            docNodeContainer.appendNode(typeParamParagraph);
         }
     }
 
